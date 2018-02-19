@@ -1,5 +1,6 @@
 package main.Validation;
 
+import main.beans.Role;
 import main.beans.User;
 
 import javax.servlet.annotation.WebFilter;
@@ -17,7 +18,6 @@ public class validate extends HttpFilter{
         HttpSession session = req.getSession();
         String user_id = req.getParameter("user_id");
         String name = req.getParameter("name");
-        String username = req.getParameter("username");
         String password = req.getParameter("password");
         String faculty = req.getParameter("faculty");
         String department = req.getParameter("department");
@@ -26,7 +26,7 @@ public class validate extends HttpFilter{
 
         User user;
 
-        if (user_id.matches("([\\w]{3,4}[/]{1}[\\d]{5}[/]{1}[\\d]+)")){
+        if (user_id.matches("([\\w]{3,4}[/]{1}[\\d]{5}[/]{1}[\\d]{2})")){
             if (name.matches("([a-zA-Z]+[ ']*)+")){
                 if (password.matches("([A-z]+\\d*[*/-]*)+")){
                     if (faculty.matches("([A-z]{3,}[ ]*)+")){
@@ -44,7 +44,7 @@ public class validate extends HttpFilter{
                                             faculty,
                                             department,
                                             email,
-                                            role
+                                            Role.valueOf(role)
                                     );
 
                                     return user;

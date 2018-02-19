@@ -1,7 +1,10 @@
 package main.databaseManager;
 
+import com.sun.org.apache.regexp.internal.RE;
 import main.ConnectionManager;
+import main.beans.BookedEquipment;
 import main.beans.Equipment;
+import main.beans.User;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -273,11 +276,12 @@ public class EquipmentManager {
         return false;
     }
 
-    public ArrayList<Equipment> getBookedEquipment() throws SQLException {
-
-        ArrayList<Equipment> data = new ArrayList<>();
+    public ArrayList<BookedEquipment> getAllBookedEquipment() throws SQLException {
+        UserManager manager = new UserManager();
+        ArrayList<BookedEquipment> data = new ArrayList<>();
         String sql = "SELECT equipments.eqp_id, equipments.eqp_name, equipments.eqp_desc, equipments.eqp_cost, " +
-                "equipments.eqp_category, equipments.calibration_date, booked_eqp.eqp_quantity from equipments " +
+                "equipments.eqp_category, equipments.calibration_date, booked_eqp.eqp_quantity, " +
+                "`booked_eqp`.`from`, `booked_eqp`.`to`, `booked_eqp`.`user_id` from equipments " +
                 "inner join booked_eqp on equipments.eqp_id=booked_eqp.eqp_id";
 
         ResultSet rs = null;
@@ -290,14 +294,73 @@ public class EquipmentManager {
             st = conn.createStatement();
             rs = st.executeQuery(sql);
             while (rs.next()){
-                data.add(new Equipment(
+                Equipment eq = new Equipment(
                         rs.getString("eqp_id"),
                         rs.getString("eqp_name"),
                         rs.getString("eqp_desc"),
                         rs.getInt("eqp_cost"),
                         rs.getInt("eqp_quantity"),
                         rs.getString("eqp_category"),
-                        rs.getDate("calibration_date")
+                        rs.getDate("calibration_date"));
+                User us = new User();
+                us.setUser_id(rs.getString("user_id"));
+                User user  = manager.getUserByUserId(us);
+                data.add(new BookedEquipment(
+                        eq,
+                        rs.getDate("from"),
+                        rs.getDate("to"),
+                        user
+                ));
+            }
+            return data;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            if (rs != null)
+                rs.close();
+            if (st != null)
+                st.close();
+        }
+
+        return null;
+    }
+
+    public ArrayList<BookedEquipment> getMyBookings(String id) throws SQLException {
+        UserManager manager = new UserManager();
+        ArrayList<BookedEquipment> data = new ArrayList<>();
+        String sql = "SELECT equipments.eqp_id, equipments.eqp_name, equipments.eqp_desc, equipments.eqp_cost, " +
+                "equipments.eqp_category, equipments.calibration_date, booked_eqp.eqp_quantity, " +
+                "`booked_eqp`.`from`, `booked_eqp`.`to`, `booked_eqp`.`user_id` from equipments " +
+                "inner join booked_eqp on equipments.eqp_id=booked_eqp.eqp_id where " +
+                "booked_eqp.user_id = ?;";
+
+        ResultSet rs = null;
+        PreparedStatement st = null;
+
+        Connection conn = null;
+
+        try {
+            conn = ConnectionManager.getInstance().getConnection();
+            st = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            st.setString(1, id);
+            rs = st.executeQuery();
+            while (rs.next()){
+                Equipment eq = new Equipment(
+                        rs.getString("eqp_id"),
+                        rs.getString("eqp_name"),
+                        rs.getString("eqp_desc"),
+                        rs.getInt("eqp_cost"),
+                        rs.getInt("eqp_quantity"),
+                        rs.getString("eqp_category"),
+                        rs.getDate("calibration_date"));
+                User us = new User();
+                us.setUser_id(rs.getString("user_id"));
+                User user  = manager.getUserByUserId(us);
+                data.add(new BookedEquipment(
+                        eq,
+                        rs.getDate("from"),
+                        rs.getDate("to"),
+                        user
                 ));
             }
             return data;

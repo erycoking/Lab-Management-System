@@ -2,6 +2,7 @@ package main.databaseManager;
 
 import main.ConnectionManager;
 import main.Utility;
+import main.beans.Role;
 import main.beans.User;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,7 +33,7 @@ public class UserManager {
             st.setString(4, user.getFaculty());
             st.setString(5, user.getDepartment());
             st.setString(6, user.getEmail());
-            st.setString(7, user.getRole());
+            st.setString(7, String.valueOf(user.getRole()));
 
             if (st.execute())
                 return true;
@@ -71,7 +72,7 @@ public class UserManager {
                         rs.getString("faculty"),
                         rs.getString("department"),
                         rs.getString("email"),
-                        rs.getString("role")
+                        Role.valueOf(rs.getString("role"))
                 ));
             }
 
@@ -113,7 +114,7 @@ public class UserManager {
                         rs.getString("faculty"),
                         rs.getString("department"),
                         rs.getString("email"),
-                        rs.getString("role")
+                        Role.valueOf(rs.getString("role"))
                 );
             }
 
@@ -150,7 +151,7 @@ public class UserManager {
             st.setString(4, user.getFaculty());
             st.setString(5, user.getDepartment());
             st.setString(6, user.getEmail());
-            st.setString(7, user.getRole());
+            st.setString(7, String.valueOf(user.getRole()));
             st.setString(8, user.getUser_id());
 
             if (st.execute())
@@ -219,7 +220,7 @@ public class UserManager {
                         rs.getString("faculty"),
                         rs.getString("department"),
                         rs.getString("email"),
-                        rs.getString("role")
+                        Role.valueOf(rs.getString("role"))
                 );
                 return user1;
             }

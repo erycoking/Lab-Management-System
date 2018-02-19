@@ -17,6 +17,37 @@
         <div class="content">
             <div class="card">
                 <div class="card-header">
+                    <p class="card-header">My Bookings</p>
+                </div>
+                <div class="card-body">
+                    <div class="table">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <td>Equipment Name</td>
+                                    <td>Equipment Description</td>
+                                    <td>Quantity available</td>
+                                    <td>From</td>
+                                    <td>To</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach var="x" items="bk">
+                                    <tr>
+                                        <td>${x.eq.eqpname}</td>
+                                        <td>${x.eq.eqpdetails}</td>
+                                        <td>${x.eq.quantity}</td>
+                                        <td>${x.from}</td>
+                                        <td>${x.to}</td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
                     <p class="lead">Equipments</p>
                 </div>
                 <div class="card-body">
@@ -25,8 +56,8 @@
                             <thead>
                                 <tr>
                                     <td>Equipment Name</td>
-                                    <td>Equipment Decription</td>
-                                    <td>Quantiy available</td>
+                                    <td>Equipment Description</td>
+                                    <td>Quantity available</td>
                                     <td>Action</td>
                                 </tr>
                             </thead>
